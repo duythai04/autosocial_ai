@@ -1,15 +1,15 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 
 import healthRoutes from "./routes/health.routes";
+import authRoutes from "./routes/auth.routes";
 
 const app = express();
 
-// Security headers
 app.use(helmet());
 
-// Allow frontend requests
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
@@ -17,10 +17,10 @@ app.use(
   }),
 );
 
-// Parse JSON request body
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
+app.use(cookieParser());
 
-// API routes
 app.use("/api/health", healthRoutes);
+app.use("/api/auth", authRoutes);
 
 export default app;

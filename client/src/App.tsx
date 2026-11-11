@@ -1,39 +1,27 @@
-import { useEffect, useState } from "react";
-import api from "./services/api";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-function App() {
-  const [status, setStatus] = useState("Đang kết nối...");
+import ProtectedRoute from "./components/ProtectedRoute";
 
-  useEffect(() => {
-    const checkBackend = async () => {
-      try {
-        const response = await api.get("/health");
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import DashboardPage from "./pages/DashboardPage";
 
-        if (response.data.success) {
-          setStatus("Backend đã kết nối thành công!");
-        }
-      } catch (error) {
-        console.error(error);
-        setStatus("Không thể kết nối Backend!");
-      }
-    };
-
-    checkBackend();
-  }, []);
-
+export default function App() {
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-      <div className="bg-white shadow-lg rounded-2xl p-10 text-center">
-        <h1 className="text-4xl font-bold text-purple-600">AutoSocial AI</h1>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-        <p className="text-gray-500 mt-3">AI Facebook Fanpage Automation</p>
+        <Route path="/login" element={<LoginPage />} />
 
-        <div className="mt-8 p-4 bg-purple-50 rounded-lg">
-          <p className="font-semibold">{status}</p>
-        </div>
-      </div>
-    </div>
+        <Route path="/register" element={<RegisterPage />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
